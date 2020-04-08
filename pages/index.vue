@@ -66,36 +66,43 @@ export default {
         this.$toast.clear()
       })
     },
+    callBRToast (text = '', type = 'error') {
+      this.$toast.show(text, { duration: 1000, position: 'bottom-right', type })
+    },
     handleSubmit () {
       if (!this.settings.length) {
-        this.$toast.show('Добавьте одно из условий', { duration: 1000, position: 'bottom-right', type: 'error' })
+        this.callBRToast('Добавьте одно из условий')
         return
       }
       // eslint-disable-next-line curly
       if (!this.$refs.registrationForm) return
+
       this.$refs.registrationForm.validate().then((data) => {
         if (!data) {
-          this.$toast.show('Форма невалидна', { duration: 1000, position: 'bottom-right', type: 'error' })
+          this.callBRToast('Форма невалидна')
           return
         }
+
         const formData = new FormData(this.$refs.settigsform)
         formData.delete('chooseSetting')
         this.$toast.show('Отправляю ...', { position: 'bottom-right', type: 'info' })
         this.loading = true
+
         this.$api.post('postForm', formData).then(() => {
           this.$toast.clear()
           console.log('Success request ', JSON.stringify(Object.fromEntries(formData)))
           this.loading = false
           this.formSent = true
-          this.$toast.show('Форма отправлена', { duration: 1000, position: 'bottom-right', type: 'success' })
+          this.callBRToast('Форма отправлена', 'success')
         })
       })
     },
     gotToNextForm () {
       if (!this.formSent) {
-        this.$toast.show('Необходимо отправить форму', { duration: 1000, position: 'bottom-right', type: 'error' })
+        this.callBRToast('Необходимо отправить форму')
         return
       }
+
       this.$router.push({ path: '/blank' })
     },
     deleteSettingHandler (settingId) {
@@ -109,10 +116,12 @@ export default {
     chooseSettingsHandler (settingId, type, name) {
       if (this.selectedDopSettings.includes(type)) {
         const name = this.settings[0].settings.filter(setting => setting.value === type)[0].name || type
-        this.$toast.show(`Условие ${name} уже выбранно`, { duration: 1000, position: 'bottom-right', type: 'error' })
+        this.callBRToast(`Условие ${name} уже выбранно`)
         return true
       }
+
       this.$toast.show('Загрузка ...', { position: 'bottom-right', type: 'info' })
+
       this.$api.get(type).then(({ data }) => {
         const setting = this.settings[settingId]
         setting.dopSettings = data
