@@ -6,7 +6,7 @@
 
 ## Demo
 
-[click me] (https://dymanic-vue-form.netlify.com/)
+[click me](https://dymanic-vue-form.netlify.com/)
 
 ---
 
